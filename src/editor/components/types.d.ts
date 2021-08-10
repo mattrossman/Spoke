@@ -63,6 +63,34 @@ namespace MOZ {
       value: Value
     }
   }
+
+  namespace Component {
+    type Class = import('./Component').default
+  
+    type Data = {
+      [propertyName: string]: Property.Value
+    }
+    type SerializedData = {
+      [propertyName: string]: Property.SerializedValue
+    }
+    type Serialized = {
+      name: string
+      selector: Selector.Serialized
+      types: Config.Types
+      config: Config.ComponentDefinition
+      data: SerializedData
+    }
+  
+    /** Data stored on {@link Node.EditorNodeMixin} */
+    type NodeProperties = {
+      value: Class[]
+      collapsed: boolean
+    }
+  
+    type SerializedNodeProperties = {
+      value: Serialized[]
+    }
+  }
   
   namespace Config {
     type Class = import('./ComponentsConfig').default
