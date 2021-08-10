@@ -1,6 +1,3 @@
-/// <reference path="./shared.d.ts" />
-/// <reference path="./propertyUtils.d.ts" />
-
 import * as THREE from "three";
 
 /**

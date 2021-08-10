@@ -77,6 +77,12 @@ module.exports = env => {
       entry: ["./src/index.js"]
     },
 
+    resolve: {
+      alias: {
+        "@src": path.resolve(__dirname, "src/")
+      }
+    },
+
     devtool: process.env.NODE_ENV === "production" ? "source-map" : "inline-source-map",
 
     devServer: {
