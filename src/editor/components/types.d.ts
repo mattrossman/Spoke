@@ -52,6 +52,18 @@ namespace MOZ {
     }[TypeName]
   }
   
+  namespace Selector {
+    type Class = import('./ComponentSelector').default
+    
+    type Type = "root" | "object" | "material"
+    type Value = string[]
+
+    type Serialized = {
+      type: Type
+      value: Value
+    }
+  }
+  
   namespace Config {
     type Class = import('./ComponentsConfig').default
 
