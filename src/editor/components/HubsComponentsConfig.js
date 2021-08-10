@@ -3,7 +3,7 @@
  * file together. This is used because we want to reference the parsed config data
  * in our app logic, but persist the raw string to retain a user's desired formatting.
  */
-export default class ComponentsConfig {
+export default class HubsComponentsConfig {
   /** @type {string} Raw contents of the config file */
   text;
 

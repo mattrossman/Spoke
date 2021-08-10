@@ -2,7 +2,7 @@
  * Selects parts of an {@link THREE.Object3D} for later processing.
  * For example, can be used to select all meshes with the given material name(s).
  */
-export default class ComponentSelector {
+export default class HubsComponentSelector {
   /** @type {MOZ.Selector.Type} - What is being selected on */
   type;
 
@@ -80,10 +80,10 @@ export default class ComponentSelector {
   /**
    * @param {MOZ.Selector.Serialized} serialized
    * @param {MOZ.Node.SpokeNode} node
-   * @returns {ComponentSelector}
+   * @returns {HubsComponentSelector}
    */
   static deserialize(serialized, node) {
-    const selector = new ComponentSelector(node);
+    const selector = new HubsComponentSelector(node);
     selector.type = serialized.type;
     selector.value = serialized.value;
     return selector;

@@ -1,10 +1,10 @@
 import { diff } from "deep-object-diff";
 
-import ComponentSelector from "./ComponentSelector";
+import HubsComponentSelector from "./HubsComponentSelector";
 import { serializeProperty, deserializeProperty, getPropertyDefault } from "./propertyUtils";
 
 /**  An A-Frame component applied to part of a node */
-export default class Component {
+export default class HubsComponent {
   /** @type {MOZ.Node.SpokeNode} - Node where this component will persist */
   node;
 
@@ -23,7 +23,7 @@ export default class Component {
   /** @type {MOZ.Component.Data} - Component data following the "config" properties structure */
   data;
 
-  /** @type {ComponentSelector} - What part(s) of the (model) node the component should be applied to */
+  /** @type {HubsComponentSelector} - What part(s) of the (model) node the component should be applied to */
   selector;
 
   /** @type {boolean} - Whether this component's UI entry should start in collapsed state */
@@ -38,14 +38,14 @@ export default class Component {
    */
   constructor(node, name) {
     /** @type {MOZ.Config.Class} */
-    this.sceneConfig = node.editor.scene.componentsConfig;
+    this.sceneConfig = node.editor.scene.hubsComponentsConfig;
 
     this.node = node;
     this.name = name;
     this.collapsed = false;
 
     this.config = this.sceneConfig.json.components?.[name];
-    this.selector = new ComponentSelector();
+    this.selector = new HubsComponentSelector();
 
     // Fill data with default values if config exists
     if (this.config) {
@@ -82,14 +82,14 @@ export default class Component {
   /**
    * @param {MOZ.Component.Serialized} serialized
    * @param {MOZ.Node.SpokeNode} node
-   * @returns {Component}
+   * @returns {HubsComponent}
    */
   static deserialize(serialized, node) {
     // Start from an empty component with default values
-    const component = new Component(node, serialized.name);
+    const component = new HubsComponent(node, serialized.name);
 
     // Fill in properties from serialized object
-    component.selector = ComponentSelector.deserialize(serialized.selector, node);
+    component.selector = HubsComponentSelector.deserialize(serialized.selector, node);
     component.types = serialized.types ?? {};
 
     const data = {};
@@ -148,7 +148,7 @@ export default class Component {
   getHubsName() {
     if (this.config.multiple) {
       /** @type {MOZ.Component.NodeProperties} */
-      const components = this.node.components;
+      const components = this.node.hubsComponents;
       const index = components.value.filter(c => c.name === this.name).indexOf(this);
       return `${this.name}__${index}`;
     } else return this.name;

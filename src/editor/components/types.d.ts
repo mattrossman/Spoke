@@ -53,7 +53,7 @@ namespace MOZ {
   }
   
   namespace Selector {
-    type Class = import('./ComponentSelector').default
+    type Class = import('./HubsComponentSelector').default
     
     type Type = "root" | "object" | "material"
     type Value = string[]
@@ -65,7 +65,7 @@ namespace MOZ {
   }
 
   namespace Component {
-    type Class = import('./Component').default
+    type Class = import('./HubsComponent').default
   
     type Data = {
       [propertyName: string]: Property.Value
@@ -93,7 +93,7 @@ namespace MOZ {
   }
   
   namespace Config {
-    type Class = import('./ComponentsConfig').default
+    type Class = import('./HubsComponentsConfig').default
 
     type Properties = {
       [name: string]: Property.Entry
