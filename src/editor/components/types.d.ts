@@ -123,6 +123,9 @@ namespace MOZ {
       types?: Types
       components?: Components
     }
+    type Serialized = {
+      text: string
+    }
   }
 
   namespace Node {

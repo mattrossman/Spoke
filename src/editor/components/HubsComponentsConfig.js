@@ -15,7 +15,7 @@ export default class HubsComponentsConfig {
 
   /** @param {string} [text] */
   constructor(text) {
-    this.setText(text ?? this.defaultText);
+    this.setText(text || this.defaultText);
   }
 
   /** @param {string} text */
@@ -28,8 +28,10 @@ export default class HubsComponentsConfig {
   getNodeNames() {
     /** @type {Set<MOZ.Node.Name>} */
     const nodeNames = new Set();
-    Object.values(this.json.components ?? {}).forEach(entry => {
-      entry.nodes?.forEach(nodeName => nodeNames.add(nodeName));
+    Object.values(this.json.components || {}).forEach(entry => {
+      if (entry.nodes) {
+        entry.nodes.forEach(nodeName => nodeNames.add(nodeName));
+      }
     });
     return nodeNames;
   }

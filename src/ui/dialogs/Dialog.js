@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Button, SecondaryButton } from "../inputs/Button";
 import styled from "styled-components";
 
-const DialogContainer = styled.form`
+export const DialogContainer = styled.form`
   display: flex;
   flex-direction: column;
   flex: 1;
@@ -15,7 +15,7 @@ const DialogContainer = styled.form`
   max-height: 80vh;
 `;
 
-const DialogHeader = styled.div`
+export const DialogHeader = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -55,7 +55,7 @@ export const DialogContent = styled.div`
   }
 `;
 
-const DialogBottomNav = styled.div`
+export const DialogBottomNav = styled.div`
   display: flex;
   height: 64px;
   flex-direction: row;

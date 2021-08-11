@@ -14,7 +14,7 @@ export default class HubsComponent {
   /** @type {MOZ.Config.Types} - Local copy of type definitions that this component references */
   types;
 
-  /** @type {MOZ.Config.ComponentDefinition} - Local copy of this component's config */
+  /** @type {?MOZ.Config.ComponentDefinition} - Local copy of this component's config */
   config;
 
   /** @type {MOZ.Config.Class} - Reference to scene level config (might be more recent) */
@@ -44,7 +44,9 @@ export default class HubsComponent {
     this.name = name;
     this.collapsed = false;
 
-    this.config = this.sceneConfig.json.components?.[name];
+    if (this.sceneConfig.json.components) {
+      this.config = this.sceneConfig.json.components[name];
+    }
     this.selector = new HubsComponentSelector();
 
     // Fill data with default values if config exists
@@ -90,7 +92,7 @@ export default class HubsComponent {
 
     // Fill in properties from serialized object
     component.selector = HubsComponentSelector.deserialize(serialized.selector, node);
-    component.types = serialized.types ?? {};
+    component.types = serialized.types || {};
 
     const data = {};
     Object.entries(serialized.data).forEach(([prop, value]) => {
@@ -176,12 +178,12 @@ export default class HubsComponent {
      * @param {boolean} multiple - If true, append a suffix to enable multiple instancing {@link https://aframe.io/docs/1.2.0/core/component.html#multiple}
      */
     const addComponent = (object, componentName, componentData, multiple) => {
-      object.userData.gltfExtensions = object.userData.gltfExtensions ?? {};
-      object.userData.gltfExtensions.MOZ_hubs_components = object.userData.gltfExtensions.MOZ_hubs_components ?? {};
+      object.userData.gltfExtensions = object.userData.gltfExtensions || {};
+      object.userData.gltfExtensions.MOZ_hubs_components = object.userData.gltfExtensions.MOZ_hubs_components || {};
       const mozHubsComponents = object.userData.gltfExtensions.MOZ_hubs_components;
 
       if (multiple) {
-        mozHubsComponents[componentName] = mozHubsComponents[componentName] ?? [];
+        mozHubsComponents[componentName] = mozHubsComponents[componentName] || [];
         mozHubsComponents[componentName].push(componentData);
       } else {
         mozHubsComponents[componentName] = componentData;
@@ -234,7 +236,7 @@ export default class HubsComponent {
 
     replaceNodeRefs(serialized.data, this.config.properties);
 
-    addComponent(object, this.name, serialized.data, this.config.multiple ?? false);
+    addComponent(object, this.name, serialized.data, this.config.multiple || false);
   }
 
   /**
@@ -242,14 +244,20 @@ export default class HubsComponent {
    * @returns {boolean}
    */
   needsUpdate() {
-    const latestProperties = this.sceneConfig.json.components?.[this.name]?.properties ?? {};
-    const latestTypes = this.sceneConfig.json.types ?? {};
+    let latestProperties = {};
+    if (this.sceneConfig.json.components) {
+      const latestConfig = this.sceneConfig.json.components[this.name];
+      if (latestConfig) {
+        latestProperties = latestConfig.properties || {};
+      }
+    }
+    const latestTypes = this.sceneConfig.json.types || {};
     const latestDependentTypes = this.getDependentTypes(latestProperties, latestTypes);
 
     const diffProperties = diff(this.config.properties, latestProperties);
     const diffTypes = diff(this.types, latestDependentTypes);
-    const numChanges = Object.keys(diffProperties).length + Object.keys(diffTypes).length;
 
+    const numChanges = Object.keys(diffProperties).length + Object.keys(diffTypes).length;
     return numChanges > 0;
   }
 }
