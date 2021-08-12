@@ -454,6 +454,34 @@ export default class Editor extends EventEmitter {
     }
   }
 
+  /**
+   * @typedef {{ __gltfIndexForUUID: string }} NodeRefMarker
+   * @typedef {MOZ.Property.SerializedValue|NodeRefMarker} ExporterSerializedValue
+   * @typedef {{[propertyName: string]: ExporterSerializedValue}} ExporterComponentData
+   *
+   * @param {ExporterComponentData} data
+   * @param {Record<string, number>} uuidToIndexMap
+   */
+  remapNodeRefsRecursive(data, uuidToIndexMap) {
+    if (Array.isArray(data)) {
+      // Instances of a component with "multiple" enabled are stored in an array
+      data.forEach(instance => this.remapNodeRefsRecursive(instance, uuidToIndexMap));
+    } else {
+      Object.entries(data).forEach(([key, value]) => {
+        if (value instanceof Object) {
+          // Case 1 (base case): the property holds a magic { __gltfIndexForUUID: "..." } object
+          if (value.__gltfIndexForUUID) {
+            data[key] = uuidToIndexMap[value.__gltfIndexForUUID];
+          }
+          // Case 2: the property holds a compound data structure, recurse
+          else {
+            this.remapNodeRefsRecursive(value, uuidToIndexMap);
+          }
+        }
+      });
+    }
+  }
+
   remapNodeRefsInComponents(collection, nodeDefs, uuidToIndexMap) {
     for (const def of collection) {
       if (def.extensions && def.extensions.MOZ_hubs_components) {
@@ -462,20 +490,7 @@ export default class Editor extends EventEmitter {
           if (!Object.prototype.hasOwnProperty.call(components, componentName)) continue;
 
           const component = components[componentName];
-
-          for (const propertyName in component) {
-            if (!Object.prototype.hasOwnProperty.call(component, propertyName)) continue;
-
-            const property = component[propertyName];
-
-            if (
-              property !== null &&
-              typeof property === "object" &&
-              Object.prototype.hasOwnProperty.call(property, "__gltfIndexForUUID")
-            ) {
-              component[propertyName] = uuidToIndexMap[property.__gltfIndexForUUID];
-            }
-          }
+          this.remapNodeRefsRecursive(component, uuidToIndexMap);
         }
       }
     }
