@@ -6,6 +6,10 @@ Portions of this project, particularly code under src/editor/, are
 derived from the "three.js / editor" project (https://github.com/mrdoob/three.js/), 
 licensed under the MIT License.
 
+The component system, particularly code under `src/editor/components` and
+`src/ui/inputs/components` was sponsored by Paradowski Creative (https://paradowski.com/)
+and published under the Mozilla Public License Version 2.0.
+
 Unless otherwise stated, the remainder of the code in the project is licensed
 under the Mozilla Public License Version 2.0
 
