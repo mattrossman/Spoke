@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import * as PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import MonacoEditor from "@monaco-editor/react";
 import styled from "styled-components";
 import { Times } from "styled-icons/fa-solid/Times";
@@ -130,9 +130,9 @@ export default function HubsComponentsConfigDialog({
 }
 
 HubsComponentsConfigDialog.propTypes = {
-  title: PropTypes.string,
-  text: PropTypes.string,
-  defaultText: PropTypes.string,
-  onSave: PropTypes.func,
-  onCancel: PropTypes.func
+  title: PropTypes.string.isRequired,
+  text: PropTypes.string.isRequired,
+  defaultText: PropTypes.string.isRequired,
+  onSave: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired
 };

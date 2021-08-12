@@ -1,16 +1,16 @@
 import React, { useContext } from "react";
-import * as PropTypes from "prop-types";
+import PropTypes from "prop-types";
+import SceneNode from "@src/editor/nodes/SceneNode";
 import { DialogContext } from "@src/ui/contexts/DialogContext";
 import { EditorContext } from "@src/ui/contexts/EditorContext";
 import { PropertiesPanelButton } from "@src/ui/inputs/Button";
-
 import HubsComponentsConfigDialog from "@src/ui/dialogs/HubsComponentsConfigDialog";
 
 /**
  * Persists our components config on the scene node
  *
  * @typedef Props
- * @property {MOZ.Node.SceneNode} node
+ * @property {SceneNode} node
  *
  * @param {Props}
  */
@@ -43,5 +43,5 @@ export default function HubsComponentsConfigEditor({ node }) {
 }
 
 HubsComponentsConfigEditor.propTypes = {
-  node: PropTypes.object
+  node: PropTypes.instanceOf(SceneNode).isRequired
 };

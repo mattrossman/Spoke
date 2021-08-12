@@ -4,13 +4,13 @@ import styled from "styled-components";
 import { CaretRight } from "styled-icons/fa-solid/CaretRight";
 import { CaretDown } from "styled-icons/fa-solid/CaretDown";
 
-const CollapsibleContainer = styled.div`
+export const CollapsibleContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 4px 8px;
 `;
 
-const CollapsibleLabel = styled.div`
+export const CollapsibleLabel = styled.div`
   color: ${props => props.theme.text2};
   cursor: pointer;
   display: inline-block;
@@ -20,7 +20,7 @@ const CollapsibleLabel = styled.div`
   }
 `;
 
-const CollapsibleContent = styled.div`
+export const CollapsibleContent = styled.div`
   display: flex;
   flex-direction: column;
   padding: 4px 8px;
