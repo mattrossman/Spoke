@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import MonacoEditor from "@monaco-editor/react";
 import styled from "styled-components";
@@ -58,6 +58,14 @@ export default function HubsComponentsConfigDialog({
   const intitialState = { status: "done", problems: [] };
   const [state, setState] = useState(intitialState);
 
+  /**
+   * `onValidate` doesn't fire if markers haven't changed.
+   * This timeout allows us to force a "done" state.
+   *
+   * @type {React.RefObject<?function>}
+   */
+  const timeout = useRef(null);
+
   const onMount = (editor, monaco) => {
     monacoEditorRef.current = editor;
     monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
@@ -69,6 +77,7 @@ export default function HubsComponentsConfigDialog({
     // TODO: add custom JSON schema to enforce our desired config file structure
     // https://github.com/suren-atoyan/monaco-react/issues/69
     const problems = markers.map(marker => `Line ${marker.startLineNumber}: ${marker.message}`);
+    clearTimeout(timeout.current);
     setState({ status: "done", problems });
   };
   const onReset = () => {
@@ -78,8 +87,16 @@ export default function HubsComponentsConfigDialog({
     onSave(monacoEditorRef.current.getValue());
   };
   const onChange = () => {
-    setState({ status: "validating", problems: [] });
+    clearTimeout(timeout.current);
+    setState({ ...state, status: "validating" });
+    timeout.current = setTimeout(() => {
+      setState({ ...state, status: "done" });
+    }, 500);
   };
+
+  useEffect(() => {
+    return () => clearTimeout(timeout.current);
+  }, []);
 
   // TODO: show `problems` contents in tooltip on icon hover
   const getIconInfo = () => {
