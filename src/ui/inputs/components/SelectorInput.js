@@ -41,7 +41,8 @@ export default function SelectorInput({ selector, node, onChange }) {
   /** @param {{label: string, value: number}[]} options */
   const onChangeSelectorValue = options => {
     set(selector => {
-      selector.value = options?.map(option => option.label) || [];
+      if (options) selector.value = options.map(option => option.label);
+      else selector.value = [];
     });
   };
 

@@ -11,6 +11,7 @@ import serializeColor from "../utils/serializeColor";
 import LoadingCube from "../objects/LoadingCube";
 import ErrorIcon from "../objects/ErrorIcon";
 import traverseFilteredSubtrees from "../utils/traverseFilteredSubtrees";
+import HubsComponent from "@src/editor/components/HubsComponent";
 
 export default function EditorNodeMixin(Object3DClass) {
   return class extends Object3DClass {
@@ -65,6 +66,16 @@ export default function EditorNodeMixin(Object3DClass) {
         if (editorSettingsComponent) {
           node.enabled = editorSettingsComponent.props.enabled;
         }
+
+        const hubsComponentsSerialized = json.components.find(c => c.name === "hubsComponents");
+        if (hubsComponentsSerialized) {
+          /** @type {MOZ.Component.SerializedNodeProperties} */
+          const hubsComponentsSerializedProps = hubsComponentsSerialized.props;
+          const deserialized = hubsComponentsSerializedProps.value.map(serialized =>
+            HubsComponent.deserialize(serialized, node)
+          );
+          node.hubsComponents.value = deserialized;
+        }
       }
 
       return node;
@@ -89,6 +100,12 @@ export default function EditorNodeMixin(Object3DClass) {
       this.loadingCube = null;
       this.errorIcon = null;
       this.issues = [];
+
+      /** @type {MOZ.Component.NodeProperties} */
+      this.hubsComponents = {
+        value: [],
+        collapsed: true
+      };
     }
 
     clone(recursive) {
@@ -120,6 +137,7 @@ export default function EditorNodeMixin(Object3DClass) {
       this.issues = source.issues.slice();
       this._visible = source._visible;
       this.enabled = source.enabled;
+      this.hubsComponents = source.hubsComponents;
 
       return this;
     }
@@ -189,6 +207,12 @@ export default function EditorNodeMixin(Object3DClass) {
             props: {
               enabled: this.enabled
             }
+          },
+          {
+            name: "hubsComponents",
+            props: /** @type {MOZ.Component.SerializedNodeProperties} */ ({
+              value: this.hubsComponents.value.map(component => component.serialize())
+            })
           }
         ]
       };
@@ -230,6 +254,23 @@ export default function EditorNodeMixin(Object3DClass) {
           visible: this.visible
         });
       }
+
+      /**
+       * Used because this.editor.scene holds certain stale UUIDs during export
+       * @type {(object: THREE.Object3D): THREE.Scene}
+       */
+      const getScene = object => {
+        let scene;
+        object.traverseAncestors(o => {
+          if (o.isScene) scene = o;
+        });
+        return scene;
+      };
+      this.hubsComponents.value.forEach(component => {
+        component.selector.getMatches(this).forEach(object => {
+          component.prepareForExport(object, getScene(object));
+        });
+      });
     }
 
     /**

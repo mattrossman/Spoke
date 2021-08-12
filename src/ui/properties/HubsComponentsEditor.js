@@ -34,7 +34,7 @@ export default function HubsComponentsProperties({ node }) {
    * Only show the components that specify our node type in their "nodes" config field
    * @type {{label: string, value: string}}
    */
-  const componentOptions = Object.entries(hubsComponentsConfig.json.components ?? {})
+  const componentOptions = Object.entries(hubsComponentsConfig.json.components || {})
     .filter(([componentName, componentConfig]) => {
       /**
        * Only allow users to attach components that match this node's type in their "nodes" field.

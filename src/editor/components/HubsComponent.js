@@ -56,7 +56,7 @@ export default class HubsComponent {
         getPropertyDefault(propConfig)
       ]);
       this.data = Object.fromEntries(entries);
-      this.types = this.getDependentTypes(this.config.properties, this.sceneConfig.json.types);
+      this.types = this.getDependentTypes(this.config.properties, this.sceneConfig.json.types || {});
     } else {
       this.data = {};
       this.types = {};
@@ -123,6 +123,9 @@ export default class HubsComponent {
         // Check that the type has a definition
         if (!typeConfig) {
           throw new Error(`No matching type definition found for type "${typeName}" in property "${propName}"`);
+        }
+        if (!typeConfig.properties) {
+          throw new Error(`No "properties" entry for type "${typeName}" in property "${propName}"`);
         }
         // Check that we're not creating an infinite loop
         if (dependencies.includes(typeName)) {
